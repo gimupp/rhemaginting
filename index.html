@@ -16,20 +16,28 @@
             --text-dim: #9abfdc; /* Biru redup untuk detail */
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* RESET TOTAL agar bisa scroll ke bawah secara alami */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
 
-        body {
+        html, body {
             background-color: var(--bg-dongker);
             color: var(--text-main);
             font-family: 'Montserrat', sans-serif;
-            overflow: hidden; /* Mencegah scroll manual, pindah slide saja */
-            position: relative;
+            min-height: 100vh;
+            /* Mengizinkan scroll ke bawah, mengunci geser ke samping */
+            overflow_y: auto !important; 
+            overflow-x: hidden !important;
+            scroll-behavior: smooth;
         }
 
         /* --- LATAR BELAKANG BERGERAK (EFEK OMBAK HALUS) --- */
         body::before {
             content: "";
-            position: absolute;
+            position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: 
                 radial-gradient(circle at 20% 30%, rgba(0, 184, 255, 0.03) 0%, transparent 50%),
@@ -41,9 +49,10 @@
         .waves {
             position: fixed;
             width: 100%;
-            height: 15vh;
+            height: 12vh;
             bottom: 0; left: 0;
             z-index: -1;
+            pointer-events: none;
         }
         .parallax > use {
             animation: move-forever 25s cubic-bezier(0.55, 0.5, 0.45, 0.5) infinite;
@@ -57,135 +66,127 @@
             100% { transform: translate3d(85px, 0, 0); }
         }
 
-        /* --- CONTAINER SLIDE --- */
-        .slider-wrapper {
-            display: flex;
-            width: 600vw; /* 6 Slide */
-            height: 100vh;
-            transition: transform 0.8s cubic-bezier(0.7, 0, 0.3, 1);
+        /* --- STRUKTUR PORTRAIT BERURUT KE BAWAH --- */
+        .main-content-wrapper {
+            display: block; /* Menghapus sistem Flexbox horizontal lama */
+            width: 100%;
+            max-width: 650px; /* Ukuran pas di HP dan terpusat di PC */
+            margin: 0 auto;
+            padding: 40px 15px 80px 15px;
         }
 
-        .slide {
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            position: relative;
+        /* Jarak antar slide/bagian saat digulir ke bawah */
+        .content-section {
+            width: 100%;
+            margin-bottom: 50px; /* Memberikan ruang antar kartu */
         }
 
         /* --- CARD STYLE (EFEK KACA) --- */
         .card {
             background: var(--glass);
             backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 25px;
-            padding: 40px;
-            width: 100%;
-            max-width: 800px;
+            border-radius: 20px;
+            padding: 35px 20px;
             text-align: center;
             box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            max-height: 85vh;
-            overflow-y: auto;
+            width: 100%;
         }
 
-        h1, h2 { font-family: 'Playfair Display', serif; color: var(--text-main); margin-bottom: 20px; }
-        h1 { font-size: 3rem; letter-spacing: -1px; }
-        h2 { font-size: 2rem; border-bottom: 2px solid var(--accent); display: inline-block; padding-bottom: 5px; }
-        h3 { color: var(--accent); margin-bottom: 10px; font-weight: 500; font-size: 1.1rem; }
+        h1, h2 { font-family: 'Playfair Display', serif; color: var(--text-main); margin-bottom: 15px; }
+        h1 { font-size: 2.3rem; letter-spacing: -1px; }
+        h2 { font-size: 1.7rem; border-bottom: 2px solid var(--accent); display: inline-block; padding-bottom: 5px; margin-bottom: 25px; }
 
         .profile-img {
-            width: 150px; height: 150px; border-radius: 50%;
-            border: 4px solid var(--accent); margin-bottom: 20px;
+            width: 140px; height: 140px; border-radius: 50%;
+            border: 4px solid var(--accent); margin-bottom: 15px;
             object-fit: cover; box-shadow: 0 0 20px var(--accent);
         }
 
-        .subtitle { font-size: 1.2rem; color: var(--text-dim); font-weight: 300; margin-bottom: 15px; }
+        .subtitle { font-size: 1.1rem; color: var(--text-dim); font-weight: 300; margin-bottom: 15px; }
 
-        /* --- TAMBAHAN STYLE TOMBOL FACEBOOK --- */
+        /* --- TOMBOL FACEBOOK --- */
         .fb-link {
             display: inline-block;
             background: #1877f2;
             color: #fff;
-            padding: 8px 18px;
-            border-radius: 20px;
+            padding: 10px 22px;
+            border-radius: 50px;
             text-decoration: none;
             font-size: 0.9rem;
             font-weight: 500;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             transition: 0.3s ease;
             box-shadow: 0 4px 15px rgba(24, 119, 242, 0.3);
         }
-        .fb-link:hover {
-            background: #145dbf;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(24, 119, 242, 0.5);
-        }
-        .fb-link i {
-            margin-right: 8px;
-        }
+        .fb-link:hover { background: #145dbf; }
+        .fb-link i { margin-right: 8px; }
 
-        /* --- GRID GALLERY (UNTUK 8 FOTO) --- */
+        /* --- GALLERY GAMBAR BESAR LURUS KE BAWAH DI HP --- */
         .photo-gallery {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin: 20px 0;
+            grid-template-columns: 1fr; /* 1 Kolom penuh vertikal */
+            gap: 25px;
+            margin-top: 15px;
         }
+        
         .gallery-item {
-            position: relative; border-radius: 12px; overflow: hidden;
-            height: 150px; border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative; 
+            border-radius: 14px; 
+            overflow: hidden;
+            height: 280px; /* Ukuran gambar besar dan jelas */
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
         }
+        
         .gallery-item img {
-            width: 100%; height: 100%; object-fit: cover;
-            transition: transform 0.5s;
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover;
         }
-        .gallery-item:hover img { transform: scale(1.1); }
+        
+        /* Teks Keterangan Foto Langsung Terbaca */
         .gallery-caption {
             position: absolute; bottom: 0; left: 0; width: 100%;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-            color: var(--white); font-size: 0.75rem; padding: 10px; text-align: left;
-            font-style: italic; opacity: 0; transition: 0.3s;
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 45%, rgba(0,0,0,0.4) 80%, transparent);
+            color: #ffffff; font-size: 0.85rem; padding: 25px 15px 15px 15px; text-align: left;
+            line-height: 1.4;
         }
-        .gallery-item:hover .gallery-caption { opacity: 1; }
 
         /* --- TIMELINE --- */
-        .timeline { list-style: none; text-align: left; margin: 30px 0; }
+        .timeline { list-style: none; text-align: left; margin: 10px 0; }
         .timeline li {
-            position: relative; padding-left: 30px; margin-bottom: 25px;
-            border-left: 2px solid var(--glass);
+            position: relative; padding-left: 25px; margin-bottom: 25px;
+            border-left: 2px solid rgba(255,255,255,0.1);
+            font-size: 0.95rem;
+            line-height: 1.5;
         }
         .timeline li::before {
-            content: "•"; position: absolute; left: -8px; top: 0;
-            color: var(--accent); font-size: 1.5rem;
+            content: "•"; position: absolute; left: -7px; top: -2px;
+            color: var(--accent); font-size: 1.4rem;
         }
-        .timeline strong { color: var(--accent); display: block; margin-bottom: 5px; }
+        .timeline strong { color: var(--accent); display: block; margin-bottom: 5px; font-size: 1.05rem; }
 
         .quote {
             font-family: 'Playfair Display', serif; font-style: italic;
-            color: var(--text-dim); font-size: 1.1rem;
-            line-height: 1.6; margin: 20px 0; text-align: justify;
+            color: var(--text-dim); font-size: 1rem;
+            line-height: 1.6; margin: 15px 0; text-align: center;
         }
 
-        /* --- NAVIGATION --- */
-        .nav-controls {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            display: flex; gap: 20px; z-index: 100;
+        /* --- RESPONSIVE LAYAR KECIL --- */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.9rem; }
+            h2 { font-size: 1.3rem; }
+            .card { padding: 25px 15px; }
+            .gallery-item { height: 260px; }
+            .main-content-wrapper { padding-top: 20px; }
         }
-        .btn {
-            background: rgba(0, 184, 255, 0.1); color: var(--text-main);
-            border: 1px solid var(--accent); padding: 12px 25px;
-            border-radius: 50px; cursor: pointer; font-weight: 600;
-            transition: 0.3s; backdrop-filter: blur(5px);
-        }
-        .btn:hover { background: var(--accent); color: var(--bg-dongker); transform: translateY(-2px); }
-        .btn:disabled { opacity: 0.2; cursor: not-allowed; border-color: #333; }
-
     </style>
 </head>
 <body>
 
+    <!-- Animasi Gelombang Latar Belakang -->
     <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
     viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
     <defs>
@@ -199,23 +200,26 @@
     </g>
     </svg>
 
-    <div class="slider-wrapper" id="slider">
+    <!-- CONTAINER UTAMA: SEMUA KONTEN MURNI SUSUN KE BAWAH (PORTRAIT) -->
+    <div class="main-content-wrapper">
         
-        <section class="slide">
+        <!-- Bagian 1: Profil Utama -->
+        <section class="content-section">
             <div class="card">
                 <img src="jakarta2.jpeg" alt="Rhema Ginting" class="profile-img">
                 <h1>Rhema Ginting</h1>
                 <p class="subtitle">45 Tahun</p>
-                <a href="https://www.facebook.com/share/1D4HLPUavv/" target="_blank" class="fb-link">
+                <a href="https://www.facebook.com/rhema.ginting" target="_blank" class="fb-link">
                     <i class="fab fa-facebook-f"></i> Hubungi via Facebook
                 </a>
                 <p class="quote">"Sebuah kehormatan bisa berbagi sepenggal kisah tentang perjalanan hidup, keringat, dan karya yang telah saya lalui."</p>
             </div>
         </section>
 
-        <section class="slide">
+        <!-- Bagian 2: Jejak Hidup -->
+        <section class="content-section">
             <div class="card">
-                <h2>Jejak Hidup Dan Pengalaman</h2>
+                <h2>Jejak Hidup & Pengalaman</h2>
                 <ul class="timeline">
                     <li>
                         <strong>2011 - 2020: Papua (10 Tahun)</strong>
@@ -233,15 +237,16 @@
             </div>
         </section>
 
-        <section class="slide">
+        <!-- Bagian 3: Jejak Papua -->
+        <section class="content-section">
             <div class="card">
                 <h2>Jejak Papua</h2>
-                <div class="photo-gallery" style="grid-template-columns: repeat(2, 1fr);">
-                    <div class="gallery-item" style="height: 250px;">
+                <div class="photo-gallery">
+                    <div class="gallery-item">
                         <img src="kesan.jpeg" alt="Papua 1">
                         <span class="gallery-caption">"Menyusuri jalan-jalan di tengah hutan Papua, di mana setiap jengkal tanah menyimpan cerita perjuangan."</span>
                     </div>
-                    <div class="gallery-item" style="height: 250px;">
+                    <div class="gallery-item">
                         <img src="bapak1.jpeg" alt="Papua 2">
                         <span class="gallery-caption">"Membangun persahabatan dengan masyarakat lokal, belajar tentang keramahtamahan sejati."</span>
                     </div>
@@ -249,95 +254,59 @@
             </div>
         </section>
 
-        <section class="slide">
+        <!-- Bagian 4: Budi Daya Lele -->
+        <section class="content-section">
             <div class="card">
                 <h2>Budi Daya Lele</h2>
-                <div class="photo-gallery" style="grid-template-columns: repeat(2, 1fr);">
-                    <div class="gallery-item" style="height: 250px;">
-                        <img src="lele.jpeg" alt="Lele 1">
+                <div class="photo-gallery">
+                    <div class="gallery-item">
+                        <img src="lele.jpeg" alt="Lele 1">"Deskripsi Gambar" width="400" height="250">
                         <span class="gallery-caption">"Dari benih hingga panen, setiap lele adalah bukti ketelatenan dalam berwirausaha."</span>
                     </div>
-                    <div class="gallery-item" style="height: 250px;">
-                        <img src="budidaya.jpeg" alt="Lele 2">
+                    <div class="gallery-item">
+                        <img src="budidaya.jpeg" alt="Lele 2">"Deskripsi Gambar" width="400" height="250">
                         <span class="gallery-caption">"Momen panen yang selalu dinanti, buah manis dari kerja keras dan kesabaran."</span>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="slide">
+        <!-- Bagian 5: Di Tambang -->
+        <section class="content-section">
             <div class="card">
                 <h2>Di Tambang</h2>
-                <div class="photo-gallery" style="grid-template-columns: repeat(2, 1fr);">
-                    <div class="gallery-item" style="height: 250px;">
-                        <img src="marwo.jpeg" alt="Tambang 1">
+                <div class="photo-gallery">
+                    <div class="gallery-item">
+                        <img src="marwo.jpeg" alt="Tambang 1">"Deskripsi Gambar" width="400" height="250">
                         <span class="gallery-caption">"Alat berat adalah rekan kerja sehari-hari, menaklukkan medan demi kemajuan bangsa."</span>
                     </div>
-                    <div class="gallery-item" style="height: 250px;">
-                        <img src="jakarta2.jpeg" alt="Tambang 2">
+                    <div class="gallery-item">
+                        <img src="jakarta2.jpeg" alt="Tambang 2">"Deskripsi Gambar" width="400" height="250">
                         <span class="gallery-caption">"Berdiri di atas tanah tambang, memandang masa depan dengan penuh keyakinan."</span>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="slide">
+        <!-- Bagian 6: Keluarga Harmonis -->
+        <section class="content-section">
             <div class="card">
-                <h2>keluarga harmonis</h2>
-                <div class="photo-gallery" style="grid-template-columns: repeat(2, 1fr);">
-                    <div class="gallery-item" style="height: 200px;">
-                        <img src="harmonis.jpeg" alt="Rhema 7">
+                <h2>Keluarga Harmonis</h2>
+                <div class="photo-gallery">
+                    <div class="gallery-item">
+                        <img src="harmonis.jpeg" alt="Rhema 7">"Deskripsi Gambar" width="400" height="250">
                         <span class="gallery-caption">"Masa lalu adalah pelajaran, masa kini adalah kesempatan."</span>
                     </div>
-                    <div class="gallery-item" style="height: 200px;">
-                        <img src="kecil.jpeg" alt="Rhema 8">
+                    <div class="gallery-item">
+                        <img src="kecil.jpeg" alt="Rhema 8">"Deskripsi Gambar" width="400" height="250">
                         <span class="gallery-caption">"Terus melangkah, memberikan yang terbaik untuk keluarga."</span>
                     </div>
                 </div>
-                <p class="quote">"Portofolio ini bukan sekadar deretan kata dan gambar, melainkan cerminan dari dedikasi dan cinta saya pada kehidupan. Terima kasih telah bersedia melihat."</p>
+                <p class="quote" style="font-size: 0.95rem; margin-top: 30px;">"Portofolio ini bukan sekadar deretan kata dan gambar, melainkan cerminan dari dedikasi dan cinta saya pada kehidupan. Terima kasih telah bersedia melihat."</p>
             </div>
         </section>
 
     </div>
-
-    <div class="nav-controls">
-        <button class="btn" id="prevBtn" disabled><i class="fas fa-arrow-left"></i> Sebelumnya</button>
-        <button class="btn" id="nextBtn">Selanjutnya <i class="fas fa-arrow-right"></i></button>
-    </div>
-
-    <script>
-        const slider = document.getElementById('slider');
-        const nextBtn = document.getElementById('nextBtn');
-        const prevBtn = document.getElementById('prevBtn');
-        
-        let currentSlide = 0;
-        const totalSlides = 6;
-
-        function updateSlide() {
-            slider.style.transform = `translateX(-${currentSlide * 100}vw)`;
-            prevBtn.disabled = currentSlide === 0;
-            nextBtn.disabled = currentSlide === totalSlides - 1;
-        }
-
-        nextBtn.addEventListener('click', () => {
-            if (currentSlide < totalSlides - 1) {
-                currentSlide++;
-                updateSlide();
-            }
-        });
-
-        prevBtn.addEventListener('click', () => {
-            if (currentSlide > 0) {
-                currentSlide--;
-                updateSlide();
-            }
-        });
-
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight') nextBtn.click();
-            if (e.key === 'ArrowLeft') prevBtn.click();
-        });
-    </script>
 
 </body>
 </html>
